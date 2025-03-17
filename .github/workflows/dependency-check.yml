@@ -25,7 +25,7 @@ jobs:
           mkdir -p reports  # Ensure reports directory exists
           curl -LO https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.2/dependency-check-9.0.2-release.zip
           unzip dependency-check-9.0.2-release.zip
-          ./dependency-check/bin/dependency-check.sh --project "MyApp" --scan . --format "SARIF" --out reports/dependency-check-report.sarif
+          ./dependency-check/bin/dependency-check.sh --project "MyApp" --scan . --format "SARIF" --out reports/dependency-check-report.sarif --disableNVD --enableOsv
           
       - name: Verify SARIF File
         run: ls -l reports/
