@@ -30,10 +30,16 @@ jobs:
       - name: Verify SARIF File
         run: ls -l reports/
 
-      - name: Upload SARIF to GitHub Security Code Scanning
-        uses: actions/upload-artifact@v3
+      # - name: Upload SARIF to GitHub Security Code Scanning
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     sarif_file: reports/dependency-check-report.sarif
+
+      - name: Save SARIF as Artifact (For Private Repos)
+        uses: actions/upload-artifact@v4  # Use v4 (latest stable version)
         with:
-          sarif_file: reports/dependency-check-report.sarif
+          name: sarif-reports
+          path: reports/dependency-check-report.sarif
 
   trivy-scan:
     runs-on: ubuntu-latest
@@ -54,10 +60,16 @@ jobs:
       - name: Verify SARIF File
         run: ls -l reports/
 
-      - name: Upload SARIF to GitHub Security Code Scanning
-        uses: actions/upload-artifact@v3
+      # - name: Upload SARIF to GitHub Security Code Scanning
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     sarif_file: reports/trivy-report.sarif
+
+      - name: Save SARIF as Artifact (For Private Repos)
+        uses: actions/upload-artifact@v4  # Use v4 (latest stable version)
         with:
-          sarif_file: reports/trivy-report.sarif
+          name: sarif-reports
+          path: reports/trivy-report.sarif
 
   semgrep-code-scan:
     runs-on: ubuntu-latest
@@ -71,7 +83,12 @@ jobs:
           config: "p/default"
           publishToken: ${{ secrets.SEMGREP_APP_TOKEN }}
 
-      - name: Upload SARIF to GitHub Security Code Scanning
-        uses: actions/upload-artifact@v3
+      # - name: Upload SARIF to GitHub Security Code Scanning
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     sarif_file: semgrep.sarif
+      - name: Save SARIF as Artifact (For Private Repos)
+        uses: actions/upload-artifact@v4  # Use v4 (latest stable version)
         with:
-          sarif_file: semgrep.sarif
+          name: sarif-reports
+          path: reports/semgrep.sarif
