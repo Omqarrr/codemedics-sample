@@ -8,6 +8,11 @@ on:
     branches:
       - main
 
+permissions:
+  security-events: write  # Grants permission to upload SARIF reports
+  actions: read
+  contents: read
+
 jobs:
   dependency-check:
     runs-on: ubuntu-latest
