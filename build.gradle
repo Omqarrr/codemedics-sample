@@ -1,0 +1,9 @@
+plugins {
+    id 'org.owasp.dependencycheck' version '8.2.1'
+}
+
+dependencyCheck {
+    format = 'HTML'  // Report format (HTML, JSON, XML, etc.)
+    failBuildOnCVSS = 7  // Fail the build if CVSS score >= 7
+    suppressionFile = 'suppression.xml'  // Optional: Path to suppression file
+}

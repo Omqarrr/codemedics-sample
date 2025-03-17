@@ -1,0 +1,65 @@
+name: Vulnerability Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dependency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Dependency-Check for Maven & Gradle
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "MyApp"
+          path: "."
+          format: "SARIF"
+          output: "dependency-check-report.sarif"
+
+      - name: Upload SARIF to GitHub Security Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: dependency-check-report.sarif
+
+  trivy-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get install -y curl jq
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+
+      - name: Run Trivy Scan on Dependencies
+        run: trivy fs --scanners vuln,secret --format sarif --output trivy-report.sarif .
+
+      - name: Upload SARIF to GitHub Security Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-report.sarif
+
+  semgrep-code-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep for Code Vulnerabilities
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: "p/default"
+          publishToken: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+      - name: Upload SARIF to GitHub Security Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
